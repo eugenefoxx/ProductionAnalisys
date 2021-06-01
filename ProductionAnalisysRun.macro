@@ -1,0 +1,304 @@
+Sub Run_Production_Analysis_Linux_v2
+Dim oDoc1, oDoc2, oDoc3, oDoc4, oDoc5 as Object
+Dim oFile1, oFile2, oFile3, oFile4, oFile5  as String
+Dim oRange1, oRange2, oRange3, oRange4, oRange5, oRange6, oRange7, oRange8, oRange9, oRange10, oRange11, _
+	oRange12, oRange13, oRange14, oRange15, oRange16, oRange17, oRange18, oRange19, oRange20, oRange21, oRange22, _
+	oRange23, oRange24, oRange25, oRange26, oRange27, oRange28, oRange29, oRange30, oRange31, oRange32 as Object
+Dim oURL1, oURL2, oURL3, oURL4, oURL5 as String
+Dim oCell as Object
+Dim oSheet as Object
+Dim i, f, x, r, k, y, t, a, b, w, m, d as Integer
+Dim aProps(2) As new com.sun.star.beans.PropertyValue 
+Dim aProps2(2) As new com.sun.star.beans.PropertyValue  
+rem добавил для проверки
+rem dim args1(1) as new com.sun.star.beans.PropertyValue
+rem dim FileSaveAs as String
+
+rem добавил для проверки
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+oDoc2   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService("com.sun.star.frame.DispatchHelper")
+rem добавил для проверки
+
+  
+	oFile1 = "///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/Выгрузка Production Analysis.csv" 
+		If fileExists (oFile1) Then
+		oURL1 = convertToUrl  (oFile1)
+		Else
+		oURL1 = "file:///Z:/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/Выгрузка Production Analysis.csv"
+		End If
+	
+	oFile2 = "///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Выработка_PanaCIM_заполнение2.ods" 
+		If fileExists (oFile2) Then
+		oURL2 = convertToUrl  (oFile2)
+		Else
+		oURL2 = "file:///Z:/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Выработка_PanaCIM_заполнение2.ods"
+		End If
+	
+	oFile3 = "///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/ReportMaterialManagment.csv" ' обработка в фоновом режиме
+		If fileExists (oFile3) Then
+		oURL3 = convertToUrl  (oFile3)
+		Else
+		oURL3 = "file:///Z:/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/ReportMaterialManagment.csv"
+		End If
+	
+'	oURL1 = convertToUrl  (oFile1)
+'	oURL2 = convertToUrl  (oFile2)
+'	oURL3 = convertToUrl  (oFile3)
+	
+  	oDoc1 = starDeskTop.loadComponentFromURL (oURL1, "_blank", 0, _
+  	                                                       Array() )
+	oDoc2 = starDeskTop.loadComponentFromURL (oURL2, "_blank", 0, _
+	                                                       Array() )
+ 
+
+  'Copy to Document 2 sheet 1
+	oRange1 = oDoc1.Sheets (0).getCellRangeByName ("A1:B2")
+	oRange2 = oDoc2.Sheets (0).getCellRangeByName ("A1:B2")
+	oRange5 = oDoc1.Sheets (0).getCellRangeByName ("A4:O60000")
+	oRange6 = oDoc2.Sheets (0).getCellRangeByName ("A4:O60000")
+	oRange2.setDataArray (oRange1.getDataArray ())
+	oRange6.setDataArray (oRange5.getDataArray ())
+	oDoc1. close(true)
+	
+	
+	aProps(0).name = "FilterName"
+	aProps(0).Value = "scalc: Text - txt - csv (StarCalc)"
+	aProps(1).name = "FilterOptions"
+	aProps(1).Value = "44,,76,1"   '"44,,76,1"   "9,,65535,1"
+	aProps(2).name = "Hidden"
+	aProps(2).Value = True 
+	oDoc3 = starDeskTop.loadComponentFromURL (oURL3, "_blank", 0, _
+ 	                                                       aProps() )
+ 	                                                       
+ 	oRange18 = oDoc3.Sheets (0).getCellRangeByName ("A1:AA60000") 'получаю доступ к диапозону ячеек на листе
+ 	oRange19 = oDoc2.Sheets (4).getCellRangeByName ("A1:AA60000") 'получаю доступ к диапозону ячеек на листе
+ 	oRange19.setDataArray (oRange18.getDataArray ())  'помещаю файл в Лист5
+	
+	
+	oSheet = oDoc2.Sheets (0)
+'	For i = 4 to 1000 'расчет Estimated Quantity
+'		oSheet.getCellByPosition (15, i).Formula = "=IFERROR(VLOOKUP(C" & i+1 & ";'file:///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/ReportMaterialManagment.csv'#$ReportMaterialManagment.$A$1:$J$1048576;10;0);"")"
+'	next i
+	
+	For i = 4 to 1500 'расчет Estimated Quantity
+	    oSheet.getCellByPosition (15, i).FormulaLocal = "=IFERROR(VLOOKUP(C" & i+1 & ";Лист5.$O$1:$P$1048576;2; );"""")"
+    next i
+
+	oRange3 = oDoc2.Sheets (0).getCellRangeByName ("P1:P60000")
+	oRange4 = oDoc2.Sheets (0).getCellRangeByName ("P1:P60000")
+	oRange4.setDataArray (oRange3.getDataArray ())
+	oDoc3. close(true)
+	
+	
+	
+	
+    oFile4 = "///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/HUMO.XLS" ' обработка в фоновом режиме
+	If fileExists (oFile4) Then
+		oURL4 = convertToUrl  (oFile4)
+	Else
+		oURL4 = "file:///Z:/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/HUMO.XLS"
+	End If
+'	oURL4 = convertToUrl  (oFile4)
+	
+	aProps(0).name = "FilterName"
+	aProps(0).Value = "scalc: Text - txt - csv (StarCalc)"
+	aProps(1).name = "FilterOptions"
+	aProps(1).Value = "9,,65535,1"
+	aProps(2).name = "Hidden"
+	aProps(2).Value = True 
+	oDoc4 = starDeskTop.loadComponentFromURL (oURL4, "_blank", 0, _
+ 	                                                       aProps() )
+ 	                                                       
+ 	oRange20 = oDoc4.Sheets (0).getCellRangeByName ("A1:AA60000") 
+ 	oRange21 = oDoc2.Sheets (5).getCellRangeByName ("A1:AA60000")
+ 	oRange21.setDataArray (oRange20.getDataArray ()) 
+ 	oDoc4. close(true)
+ 	
+ 	 oFile5 = "///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Шаблон/виды упаковок в SAP.xlsx" ' вставка листа упаковок обработка в фоновом режиме
+	If fileExists (oFile5) Then
+		oURL5 = convertToUrl  (oFile5)
+	Else
+		oURL5 = "file:///Z:/1_Планирование производства Победит1/Производство Победит1/Шаблон/виды упаковок в SAP.xlsx"
+	End If
+'	oURL4 = convertToUrl  (oFile4)
+	
+	aProps(0).name = "FilterName"
+	aProps(0).Value = "scalc: Text - txt - csv (StarCalc)"
+	aProps(1).name = "FilterOptions"
+	aProps(1).Value = "9,,65535,1"
+	aProps(2).name = "Hidden"
+	aProps(2).Value = True 
+	oDoc5 = starDeskTop.loadComponentFromURL (oURL5, "_blank", 0, _
+ 	                                                       aProps() )
+ 	                                                       
+ 	oRange29 = oDoc5.Sheets (0).getCellRangeByName ("A1:AA60000") 
+ 	oRange30 = oDoc2.Sheets (6).getCellRangeByName ("A1:AA60000")
+ 	oRange30.setDataArray (oRange29.getDataArray ()) 
+ 	oDoc5. close(true)
+ 	
+ 	oSheet = oDoc2.Sheets (0)
+ 	
+'	For f = 4 to 1000 'SAP ЕО
+'		oSheet.getCellByPosition (16, f).Formula = "=IFERROR(VLOOKUP(C" & f+1 & ";'file:///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/HUMO.XLS'#$HUMO.$B$1:$I$1048576;1;0);"")"
+'	next f
+	For a = 4 to 1500 'вставка SAP №
+	    oSheet.getCellByPosition (16, a).FormulaLocal = "=IFERROR(VLOOKUP(C" & a+1 & ";Лист6.$B$1:$I$1048576;5; );"""")"
+    next a
+
+	oRange23 = oDoc2.Sheets (0).getCellRangeByName ("Q1:Q60000")
+	oRange24 = oDoc2.Sheets (0).getCellRangeByName ("Q1:Q60000")
+	oRange24.setDataArray (oRange23.getDataArray ())
+	
+	
+	
+	For f = 4 to 1500 'SAP ЕО
+		oSheet.getCellByPosition (17, f).FormulaLocal = "=IFERROR(VLOOKUP(C" & f+1 & ";Лист6.$B$1:$I$1048576;1; );"""")"
+	next f
+	
+	oRange6 = oDoc2.Sheets (0).getCellRangeByName ("R1:R60000")
+	oRange7 = oDoc2.Sheets (0).getCellRangeByName ("R1:R60000")
+	oRange7.setDataArray (oRange6.getDataArray ())
+	
+'	For x = 4 to 1000 'кол-во в ЕО SAP
+'		oSheet.getCellByPosition (17, x).Formula = "=IFERROR(VLOOKUP(C" & x+1 & ";'file:///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/HUMO.XLS'#$HUMO.$B$1:$I$1048576;6;0);"")"
+'	Next x
+	For b = 4 to 1500 'вставка номера упаковки
+	    oSheet.getCellByPosition (18, b).FormulaLocal = "=IFERROR(VLOOKUP(C" & b+1 & ";Лист6.$B$1:$I$1048576;2; );"""")"
+    next b
+    
+    oRange25 = oDoc2.Sheets (0).getCellRangeByName ("S1:S60000")
+	oRange26 = oDoc2.Sheets (0).getCellRangeByName ("S1:S60000")
+	oRange26.setDataArray (oRange25.getDataArray ())
+	
+	For d = 4 to 1500 'вставка описание упаковки
+	    oSheet.getCellByPosition (19, d).FormulaLocal = "=IFERROR(VLOOKUP(S" & d+1 & ";Лист7.$A$1:$B$1048576;2; );"""")"
+    next d
+    
+    oRange31 = oDoc2.Sheets (0).getCellRangeByName ("T1:T60000")
+	oRange32 = oDoc2.Sheets (0).getCellRangeByName ("T1:T60000")
+	oRange32.setDataArray (oRange31.getDataArray ())
+	
+
+	For x = 4 to 1500 'кол-во в ЕО SAP
+	    oSheet.getCellByPosition (20, x).FormulaLocal = "=IFERROR(VLOOKUP(C" & x+1 & ";Лист6.$B$1:$I$1048576;6; );"""")"
+	Next x
+	
+	oRange8 = oDoc2.Sheets (0).getCellRangeByName ("U1:U60000")
+	oRange9 = oDoc2.Sheets (0).getCellRangeByName ("U1:U60000")
+	oRange9.setDataArray (oRange8.getDataArray ())
+
+		
+	For y = 4 To 1500 'Общая сумма по ID
+		oSheet.getCellByPosition (21, y).FormulaLocal = "=SUMIFS($F$1:$F$100000;$C$1:$C$100000;C"& y+1 &")"
+	Next y
+
+	oRange14 = oDoc2.Sheets (0).getCellRangeByName ("V1:V60000")
+	oRange15 = oDoc2.Sheets (0).getCellRangeByName ("V1:V60000")
+	oRange15.setDataArray (oRange14.getDataArray ())
+	
+	For r = 4 to 1500 'расчетный остаток
+		oSheet.getCellByPosition (22, r).FormulaLocal = "= U" & r+1 &" - V" & r+1 & ""
+	Next r
+	oRange10 = oDoc2.Sheets (0).getCellRangeByName ("W1:W60000")
+	oRange11 = oDoc2.Sheets (0).getCellRangeByName ("W1:W60000")
+	oRange11.setDataArray (oRange10.getDataArray ())
+	
+	For k = 4 to 1500 'расчет дельты
+		oSheet.getCellByPosition (23, k).FormulaLocal = "= W" & k+1 &" - P" & k+1 & ""
+	Next k
+	oRange12 = oDoc2.Sheets (0).getCellRangeByName ("X1:X60000")
+	oRange13 = oDoc2.Sheets (0).getCellRangeByName ("X1:X60000")
+	oRange13.setDataArray (oRange12.getDataArray ())
+	
+'	For w = 4 to 1000 'проверка условия 0
+'		For m = 4 to 1000
+'		If oSheet.getCellByPosition (22, m).Value = "= #Н/Д" & t+1 & "" Then
+'			oSheet.getCellByPosition (23, w).Formula = "0"
+'		End If
+'		Next m 
+'	Next w 
+'	oRange27 = oDoc2.Sheets (0).getCellRangeByName ("X1:X60000")
+'	oRange28 = oDoc2.Sheets (0).getCellRangeByName ("X1:X60000")
+'	oRange28.setDataArray (oRange27.getDataArray ())
+	
+'	For t = 4 to 1000 'SAP склад
+'		oSheet.getCellByPosition (22, t).Formula = "=IFERROR(VLOOKUP(C" & t+1 & ";'file:///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Source_Date/HUMO.XLS'#$HUMO.$B$1:$I$1048576;4;0);"")"
+		
+'	Next t
+	For t = 4 to 1500 'SAP склад
+	    oSheet.getCellByPosition (25, t).FormulaLocal = "=IFERROR(VLOOKUP(C" & t+1 & ";Лист6.$B$1:$I$1048576;4; );"""")"
+	Next t
+	oRange16 = oDoc2.Sheets (0).getCellRangeByName ("Z1:Z60000")
+	oRange17 = oDoc2.Sheets (0).getCellRangeByName ("Z1:Z60000")
+	oRange17.setDataArray (oRange16.getDataArray ())
+	
+'	oDoc3. close(true)
+	
+	rem добавил для проверки
+	
+'	FileSaveAs = oDoc2.Sheets (0).getCellRangeByName ("A1:O60000")
+'	args1(0).Name = "URL"
+'	args1(0).Value = "file:///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии" + FileSaveAs + ".ods"
+'	args1(1).Name = "FilterName"
+'	args1(1).Value = "calc8"
+
+'	dispatcher.executeDispatch(oDoc2, ".uno:SaveAs", "", 0, Array())
+rem добавил для проверки
+	
+	
+	oDoc2.CurrentController.Frame.ContainerWindow.toFront() 'активация автомакроса thiscomponent с заменой на требуемый документ oDoc
+	show_save_dialog
+	
+'	MsgBox ("Данные обработаны!",48)	
+	
+End Sub
+
+
+Function show_save_dialog  ' диалогове окно для сохранения файла
+	dim aurl as object 'Doc
+	dim s as string 'URL
+	dim oDlg as object
+	
+	dim document   as object
+	dim dispatcher as object
+	
+	
+'	s = convertToUrl  (aurl)
+'	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService("com.sun.star.frame.DispatchHelper")
+	dim args1(1) as new com.sun.star.beans.PropertyValue
+	
+	s = "///mnt/pobedit/1_Планирование производства Победит1/Производство Победит1/Выработка линии/Выработка_PanaCIM_заполнение2.ods"
+	sFilePickerArgs = Array(_
+	com.sun.star.ui.dialogs.TemplateDescription.FILESAVE_AUTOEXTENSION )	
+	oDlg = createUnoService("com.sun.star.ui.dialogs.FilePicker")
+	oDlg.initialize(sFilePickerArgs())
+	oDlg.setMultiSelectionMode(false)
+	oDlg.appendFilter("CSV Files (.ods)", "*.ods" )
+'	oDlg.appendFilter("CSV Files (.csv)", "*.csv" )	
+	oDlg.setTitle("Save As....")
+	
+	if oDlg.execute() then
+		aUrl = oDlg.getFiles()
+		s = aUrl(0)
+		if len(s) > 0 then
+			MsgBox("File Selected: " & s & chr(13))
+		end if
+	else
+		s = ""
+	end if
+	show_save_dialog = s
+	
+	args1(0).Name = "URL"
+	args1(0).Value = s'"file:///home/eugene/Desktop/macro_recipes111.ods"
+	args1(1).Name = "FilterName"
+	args1(1).Value = "calc8"
+
+	dispatcher.executeDispatch(document, ".uno:SaveAs", "", 0, args1())
+	
+End Function
